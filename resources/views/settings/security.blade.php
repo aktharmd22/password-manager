@@ -7,23 +7,25 @@
 
         @include('settings._nav')
 
-        <x-card title="Two-factor authentication" description="Enabled — your account is protected by a TOTP authenticator app.">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-vault-success/10 text-vault-success flex items-center justify-center">
-                    <x-icon name="shield-check" class="w-5 h-5" />
+        @if ($user->hasTwoFactorEnabled())
+            <x-card title="Two-factor authentication" description="Enabled — your account is protected by a TOTP authenticator app.">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-vault-success/10 text-vault-success flex items-center justify-center">
+                        <x-icon name="shield-check" class="w-5 h-5" />
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">Active since {{ $user->two_factor_confirmed_at?->format('M j, Y') }}</p>
+                        <p class="text-xs text-vault-text-subtle">{{ count($user->two_factor_recovery_codes ?? []) }} recovery codes remaining.</p>
+                    </div>
+                    <form method="POST" action="{{ route('settings.security.2fa.regenerate') }}" onsubmit="return confirm('Generate new recovery codes? Your old codes will stop working.');">
+                        @csrf
+                        <x-button type="submit" variant="secondary" icon="refresh-cw">Regenerate codes</x-button>
+                    </form>
                 </div>
-                <div class="flex-1">
-                    <p class="text-sm font-medium">Active since {{ $user->two_factor_confirmed_at?->format('M j, Y') }}</p>
-                    <p class="text-xs text-vault-text-subtle">{{ count($user->two_factor_recovery_codes ?? []) }} recovery codes remaining.</p>
-                </div>
-                <form method="POST" action="{{ route('settings.security.2fa.regenerate') }}" onsubmit="return confirm('Generate new recovery codes? Your old codes will stop working.');">
-                    @csrf
-                    <x-button type="submit" variant="secondary" icon="refresh-cw">Regenerate codes</x-button>
-                </form>
-            </div>
-        </x-card>
+            </x-card>
+        @endif
 
-        <x-card title="Change master password" description="You'll need your current password and a 2FA code.">
+        <x-card title="Change master password" :description="$user->hasTwoFactorEnabled() ? 'Requires your current password and a 2FA code.' : 'Requires your current password.'">
             <form method="POST" action="{{ route('settings.security.password') }}" class="space-y-4 max-w-md">
                 @csrf
                 @method('PATCH')
@@ -34,14 +36,16 @@
 
                 <x-input name="password_confirmation" type="password" label="Confirm new password" autocomplete="new-password" required />
 
-                <x-input name="two_factor_code" label="2FA code" placeholder="123 456" inputmode="numeric" autocomplete="one-time-code" required />
+                @if ($user->hasTwoFactorEnabled())
+                    <x-input name="two_factor_code" label="2FA code" placeholder="123 456" inputmode="numeric" autocomplete="one-time-code" required />
+                @endif
 
                 <div class="pt-2">
                     <x-button type="submit" variant="primary" icon="lock">Change password</x-button>
                 </div>
 
                 <p class="text-xs text-vault-text-subtle pt-2 border-t border-vault-border-light dark:border-vault-border">
-                    Policy: at least {{ config('vault.password_policy.min_length') }} chars, mixed case, numbers, and symbols. Must not be on known breach lists.
+                    Policy: at least {{ config('vault.password_policy.min_length') }} chars, mixed case, numbers, and symbols.
                 </p>
             </form>
         </x-card>

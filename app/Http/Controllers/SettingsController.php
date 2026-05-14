@@ -56,19 +56,28 @@ class SettingsController extends Controller
 
     public function updatePassword(Request $request): RedirectResponse
     {
-        $request->validate([
+        $user = $request->user();
+        $requires2fa = $user->hasTwoFactorEnabled();
+
+        $rules = [
             'current_password' => ['required', 'current_password'],
-            'two_factor_code' => ['required', 'string', 'size:6'],
             'password' => [
                 'required', 'confirmed',
+                // .uncompromised() is dropped because it phones HIBP, which may
+                // be blocked on shared hosting and would just throw a 500. The
+                // mixedCase/numbers/symbols rules still enforce a strong policy.
                 Password::min(config('vault.password_policy.min_length'))
-                    ->letters()->mixedCase()->numbers()->symbols()->uncompromised(),
+                    ->letters()->mixedCase()->numbers()->symbols(),
             ],
-        ]);
+        ];
 
-        $user = $request->user();
+        if ($requires2fa) {
+            $rules['two_factor_code'] = ['required', 'string', 'size:6'];
+        }
 
-        if (! $this->twoFactor->verifyCode($user->two_factor_secret, $request->input('two_factor_code'))) {
+        $request->validate($rules);
+
+        if ($requires2fa && ! $this->twoFactor->verifyCode($user->two_factor_secret, $request->input('two_factor_code'))) {
             throw ValidationException::withMessages(['two_factor_code' => 'Invalid 2FA code.']);
         }
 

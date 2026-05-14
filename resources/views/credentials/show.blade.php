@@ -106,8 +106,8 @@
                                     class="p-2 rounded hover:bg-vault-border-light dark:hover:bg-vault-surface text-vault-text-subtle hover:text-vault-text-light dark:hover:text-vault-text"
                                     :title="passwordVisible ? 'Hide' : 'Reveal for ' + {{ config('vault.password_reveal_seconds') }} + 's'"
                                 >
-                                    <x-icon name="eye" class="w-4 h-4" x-show="!passwordVisible" />
-                                    <x-icon name="eye-off" class="w-4 h-4" x-show="passwordVisible" x-cloak />
+                                    <span x-show="!passwordVisible"><x-icon name="eye" class="w-4 h-4" /></span>
+                                    <span x-show="passwordVisible" x-cloak><x-icon name="eye-off" class="w-4 h-4" /></span>
                                 </button>
                                 <button
                                     type="button"

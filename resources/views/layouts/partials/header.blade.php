@@ -53,8 +53,8 @@
             class="p-2 rounded-lg hover:bg-vault-border-light/40 dark:hover:bg-vault-surface text-vault-text-subtle hover:text-vault-text-light dark:hover:text-vault-text transition-all"
             aria-label="Toggle theme"
         >
-            <x-icon name="sun" class="w-4 h-4" x-show="$store.theme.current === 'dark'" />
-            <x-icon name="moon" class="w-4 h-4" x-show="$store.theme.current === 'light'" />
+            <span x-show="$store.theme.current === 'dark'"><x-icon name="sun" class="w-4 h-4" /></span>
+            <span x-show="$store.theme.current === 'light'"><x-icon name="moon" class="w-4 h-4" /></span>
         </button>
     </div>
 </header>

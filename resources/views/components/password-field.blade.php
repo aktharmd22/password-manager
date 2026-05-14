@@ -85,8 +85,8 @@
             class="absolute inset-y-0 right-0 pr-3 flex items-center text-vault-text-subtle hover:text-vault-text-light dark:hover:text-vault-text"
             :aria-label="visible ? 'Hide password' : 'Show password'"
         >
-            <x-icon name="eye" class="w-4 h-4" x-show="!visible" />
-            <x-icon name="eye-off" class="w-4 h-4" x-show="visible" x-cloak />
+            <span x-show="!visible"><x-icon name="eye" class="w-4 h-4" /></span>
+            <span x-show="visible" x-cloak><x-icon name="eye-off" class="w-4 h-4" /></span>
         </button>
     </div>
 

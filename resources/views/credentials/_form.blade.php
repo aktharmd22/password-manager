@@ -191,15 +191,9 @@
             </div>
         </x-card>
 
-        @if ($isEdit)
-            <x-card>
-                <form method="POST" action="{{ route('credentials.destroy', $credential) }}" onsubmit="return confirm('Move this credential to trash? You can restore it later.');">
-                    @csrf
-                    @method('DELETE')
-                    <x-button type="submit" variant="danger" icon="trash-2" class="w-full">Delete credential</x-button>
-                </form>
-            </x-card>
-        @endif
+        {{-- NOTE: the Delete button must NOT be nested inside this <form> — HTML
+             forbids nested forms and the browser ends up submitting the wrong
+             one. Delete lives on the edit page as a sibling form instead. --}}
     </div>
 
     <script>

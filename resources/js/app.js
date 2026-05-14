@@ -41,9 +41,13 @@ function renderLucideIcon(el) {
     svg.setAttribute('stroke-linecap', 'round');
     svg.setAttribute('stroke-linejoin', 'round');
 
-    // Copy class attribute and other custom attrs onto the SVG so Tailwind classes
-    // like `w-4 h-4 text-vault-accent` keep working.
-    if (el.className) svg.setAttribute('class', el.className);
+    // Copy every attribute from the <i> over to the <svg> so Alpine directives
+    // (x-show, x-cloak, :class, etc.) keep working after the replacement.
+    // Skip our internal data-lucide / data-stroke-width markers.
+    for (const attr of Array.from(el.attributes)) {
+        if (attr.name === 'data-lucide' || attr.name === 'data-stroke-width') continue;
+        svg.setAttribute(attr.name, attr.value);
+    }
 
     iconData.forEach((tuple) => svg.appendChild(buildSvgChild(tuple)));
     el.replaceWith(svg);
@@ -81,21 +85,19 @@ document.addEventListener('alpine:init', () => {
     });
 });
 
-window.Alpine = Alpine;
-Alpine.start();
-
-// ---------------------------------------------------------------------------
-// Lucide icon rendering
-// ---------------------------------------------------------------------------
+// IMPORTANT: render Lucide icons BEFORE Alpine.start() so the resulting
+// <svg> elements (with x-show / x-cloak / :class copied over) are what
+// Alpine scans. If we replaced <i> → <svg> after Alpine had already bound
+// to the <i>, the directives on the new <svg> would never fire.
 function renderIcons() {
     if (window.lucide?.createIcons) {
         window.lucide.createIcons();
     }
 }
+renderIcons();
 
-document.addEventListener('DOMContentLoaded', renderIcons);
-// Re-render after Alpine renders new DOM (toasts, modals, dropdowns).
-document.addEventListener('alpine:initialized', renderIcons);
+window.Alpine = Alpine;
+Alpine.start();
 
 // MutationObserver: any new <i data-lucide> added later (toasts, modals) is rendered.
 const observer = new MutationObserver((mutations) => {

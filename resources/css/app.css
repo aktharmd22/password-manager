@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /* Hide elements bound with Alpine's x-cloak until Alpine initializes. */
+    [x-cloak] { display: none !important; }
+
+    html {
+        @apply antialiased;
+        font-feature-settings: 'ss01', 'cv11';
+    }
+
+    body {
+        @apply bg-vault-bg-light text-vault-text-light;
+        font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    .dark body {
+        @apply bg-vault-bg text-vault-text;
+    }
+
+    h1, h2, h3, h4 {
+        @apply tracking-tight font-semibold;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        @apply bg-vault-border-light dark:bg-vault-border rounded-full;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-vault-text-subtle/40;
+    }
+
+    /* Selection */
+    ::selection {
+        @apply bg-vault-accent/30 text-vault-text-light dark:text-vault-text;
+    }
+
+    /* Remove autofill yellow */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+        -webkit-text-fill-color: inherit !important;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+}
+
+@layer components {
+    .font-mono {
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+               font-medium text-sm transition-all duration-200
+               focus:outline-none focus-visible:ring-2 focus-visible:ring-vault-accent focus-visible:ring-offset-2
+               focus-visible:ring-offset-vault-bg-light dark:focus-visible:ring-offset-vault-bg
+               disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-primary {
+        @apply bg-vault-accent hover:bg-vault-accent-hover text-white shadow-vault-sm;
+    }
+
+    .btn-secondary {
+        @apply bg-vault-border-light/60 hover:bg-vault-border-light text-vault-text-light
+               dark:bg-vault-surface dark:hover:bg-vault-surface-elevated dark:text-vault-text
+               border border-vault-border-light dark:border-vault-border;
+    }
+
+    .btn-ghost {
+        @apply hover:bg-vault-border-light/40 dark:hover:bg-vault-surface
+               text-vault-text-light dark:text-vault-text;
+    }
+
+    .btn-danger {
+        @apply bg-vault-danger/10 hover:bg-vault-danger text-vault-danger hover:text-white
+               border border-vault-danger/30;
+    }
+
+    .input {
+        @apply w-full px-3.5 py-2.5 rounded-lg text-sm
+               bg-white dark:bg-vault-bg/60
+               border border-vault-border-light dark:border-vault-border
+               text-vault-text-light dark:text-vault-text
+               placeholder:text-vault-text-subtle
+               focus:outline-none focus:ring-2 focus:ring-vault-accent/40 focus:border-vault-accent
+               transition-all duration-200;
+    }
+
+    .card {
+        @apply bg-white dark:bg-vault-surface
+               border border-vault-border-light dark:border-vault-border
+               rounded-xl;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium;
+    }
+
+    .skeleton {
+        @apply bg-gradient-to-r from-vault-border-light via-vault-border-light/60 to-vault-border-light
+               dark:from-vault-border dark:via-vault-border/60 dark:to-vault-border
+               bg-[length:1000px_100%] animate-shimmer rounded;
+    }
+
+    /* Sidebar nav link */
+    .nav-link {
+        @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
+               text-vault-text-light/70 dark:text-vault-text-muted
+               hover:bg-vault-border-light/40 dark:hover:bg-vault-surface-elevated
+               hover:text-vault-text-light dark:hover:text-vault-text
+               transition-all duration-200;
+    }
+
+    .nav-link-active {
+        @apply bg-vault-accent-soft text-vault-accent
+               hover:bg-vault-accent-soft hover:text-vault-accent;
+    }
+
+    /* Glass overlay for modals */
+    .glass {
+        @apply backdrop-blur-md bg-white/70 dark:bg-vault-bg/70;
+    }
+}
